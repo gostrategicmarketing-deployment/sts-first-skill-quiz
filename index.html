@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/logo_icon.png">
+<title>STS First Skill Quiz</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=IM+Fell+Great+Primer:ital@0;1&display=swap">
+<style>
+/* Layout: a slim reviewer bar on top, then one STS page at a time (ad, quiz, email, result, checkout, welcome, result email), routed by the link's #name.
+   Commits to STS's light site look on purpose: it mocks the real pages, so it stays light in every theme. */
+:root {
+  --sun:#E9B242; --sun-ink:#7E5B0E; --sun-soft:#FBF1DC; --char:#35383F; --deep:#2B2E34;
+  --cream:#FAF7F0; --paper:#FFFFFF; --ink:#2A2D31; --mid:#5A5E65; --line:#E2DFD7; --tint:#F3EDE0; --on-deep:#EDEAE3; --on-deep-mid:#C3C0B8;
+  --feed:#F0F2F5; --fb-ink:#1C1E21; --fb-mid:#65676B; --fb-line:#DADDE1; --fb-btn:#E4E6EB;
+  --rev:#17191C; --rev-2:#2A2D32; --rev-ink:#F2EFE8; --rev-mid:#A9A69F; --rev-line:#3E4147;
+  --err:#A3352B; --focus:#1E6FD9;
+  --display:"IM Fell Great Primer", Georgia, "Times New Roman", serif;
+  --heavy:"Archivo Black", "Arial Black", Archivo, sans-serif;
+  --body:Archivo, "Helvetica Neue", Arial, sans-serif;
+  --fb-font:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color-scheme:light;
+}
+*, *::before, *::after { box-sizing:border-box; }
+body { background:var(--cream); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.6; margin:0; -webkit-font-smoothing:antialiased; }
+img { max-width:100%; display:block; }
+p { margin:0; }
+:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+.wrap { max-width:760px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+.wrap.wide { max-width:1040px; }
+
+/* Reviewer bar (not part of the STS pages) */
+.rev { background:var(--rev); color:var(--rev-ink); font-size:13px; line-height:1.4; }
+.rev .wrap { padding-block:10px; display:grid; gap:8px; }
+.rev-top { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between; }
+.rev-title b { font-weight:700; }
+.rev-title span { color:var(--rev-mid); }
+.seg { display:inline-flex; align-items:center; gap:8px; }
+.seg-label { color:var(--rev-mid); }
+.seg-btns { display:inline-flex; border:1px solid var(--rev-line); border-radius:999px; overflow:hidden; }
+.seg button { background:transparent; border:0; color:var(--rev-ink); font:inherit; padding:5px 14px; cursor:pointer; }
+.seg button[aria-pressed="true"] { background:var(--sun); color:var(--deep); font-weight:700; }
+.chiprow { display:flex; gap:8px; align-items:center; min-width:0; }
+.chiprow .lab { color:var(--rev-mid); white-space:nowrap; flex:none; }
+.chips { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; min-width:0; padding:1px; }
+.chips::-webkit-scrollbar { display:none; }
+.chips a { white-space:nowrap; text-decoration:none; color:var(--rev-ink); border:1px solid var(--rev-line); border-radius:999px; padding:4px 11px; }
+.chips a:hover { border-color:var(--rev-mid); }
+.chips a[aria-current] { background:var(--rev-2); border-color:var(--sun); }
+.chips .n { color:var(--sun); font-weight:700; margin-right:5px; font-variant-numeric:tabular-nums; }
+
+/* STS site chrome */
+.site { background:var(--paper); border-bottom:1px solid var(--line); }
+.site .wrap { display:flex; align-items:center; gap:10px; padding-block:12px; }
+.site .logo { width:34px; height:34px; border-radius:50%; background:var(--deep); display:grid; place-items:center; flex:none; }
+.site .logo img { width:24px; height:24px; }
+.site b { font-family:var(--heavy); font-weight:400; font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:var(--char); line-height:1.15; }
+footer.foot { padding-block:26px 32px; text-align:center; font-size:13px; color:var(--mid); }
+footer.foot p + p { margin-top:4px; }
+
+/* Shared type and controls */
+.badge { display:inline-block; border:2px solid var(--sun); color:var(--sun); font-weight:700; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; padding:5px 14px; border-radius:3px; margin-bottom:16px; }
+h1.big { font-family:var(--heavy); font-weight:400; text-transform:uppercase; font-size:clamp(30px, 6.4vw, 48px); line-height:1.08; margin:0 0 14px; text-wrap:balance; }
+h1.big span { display:block; color:var(--sun); }
+h1:focus, h2:focus { outline:none; }
+.sub { font-family:var(--display); font-style:italic; font-size:clamp(18px, 3.2vw, 22px); line-height:1.45; color:var(--on-deep); max-width:600px; margin:0 auto; }
+.eyebrow { font-weight:700; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--sun-ink); margin-bottom:8px; }
+h2.sec { font-family:var(--display); font-weight:400; font-size:clamp(26px, 4.6vw, 34px); line-height:1.22; color:var(--char); margin:0 0 16px; text-wrap:balance; }
+.center { text-align:center; }
+.lead { font-size:17.5px; color:var(--ink); max-width:62ch; }
+.center .lead { margin-inline:auto; }
+.btn { display:inline-flex; justify-content:center; align-items:center; background:var(--sun); color:var(--deep); font-family:var(--heavy); font-weight:400; text-transform:uppercase; letter-spacing:.04em; text-decoration:none; border-radius:5px; padding:16px 26px; font-size:16px; line-height:1.2; border:0; cursor:pointer; box-shadow:0 4px 18px rgba(233,178,66,.35); text-align:center; }
+.btn:hover { filter:brightness(1.05); }
+.btn.block { width:100%; }
+.link { background:none; border:0; padding:0; font:inherit; color:inherit; text-decoration:underline; cursor:pointer; }
+.band { padding-block:48px; }
+.band.white { background:var(--paper); }
+.band.tint { background:var(--tint); }
+.band.deep { background:var(--deep); color:#fff; }
+.band.deep h2.sec { color:#fff; }
+.stack { display:grid; gap:14px; }
+
+/* Ad */
+.feed { background:var(--feed); }
+.feed .wrap { max-width:540px; padding-block:24px 40px; display:grid; gap:10px; }
+.cap { font-size:13px; color:var(--fb-mid); font-family:var(--fb-font); }
+.fb { background:#fff; border:1px solid var(--fb-line); border-radius:10px; overflow:hidden; font-family:var(--fb-font); color:var(--fb-ink); }
+.fb-hd { display:flex; gap:10px; align-items:center; padding:12px 12px 6px; }
+.fb-av { width:40px; height:40px; border-radius:50%; background:var(--deep); display:grid; place-items:center; flex:none; }
+.fb-av img { width:28px; height:28px; }
+.fb-nm { font-weight:600; font-size:15px; line-height:1.25; }
+.fb-sp { font-size:12.5px; color:var(--fb-mid); }
+.fb-tx { font-size:15px; line-height:1.42; padding:4px 12px 12px; white-space:pre-line; }
+.fb-more { background:none; border:0; color:var(--fb-mid); font:inherit; cursor:pointer; padding:0; }
+.fb-im { position:relative; display:block; aspect-ratio:4/5; overflow:hidden; max-width:100%; color:inherit; text-decoration:none; }
+.fb-im img { width:100%; height:100%; object-fit:cover; }
+.fb-pn { position:absolute; left:6%; right:6%; bottom:6%; background:var(--deep); color:#fff; border-radius:6px; padding:16px 16px 14px; text-align:center; font-family:var(--body); }
+.fb-pn .k { font-weight:700; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--sun); }
+.fb-pn .h { font-family:var(--heavy); text-transform:uppercase; font-size:clamp(19px, 5vw, 24px); line-height:1.12; margin:6px 0 10px; }
+.fb-pn .p { display:inline-block; background:var(--sun); color:var(--deep); font-family:var(--heavy); text-transform:uppercase; font-size:14px; padding:6px 12px; border-radius:3px; }
+.fb-ft { display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--feed); padding:10px 12px; }
+.fb-ft > div { min-width:0; }
+.fb-ft .u { font-size:12px; color:var(--fb-mid); text-transform:uppercase; }
+.fb-ft .hl { font-weight:700; font-size:15px; line-height:1.3; }
+.fb-ft .ds { font-size:13px; color:var(--fb-mid); }
+.fb-cta { background:var(--fb-btn); border-radius:6px; padding:8px 12px; font-weight:600; font-size:14px; white-space:nowrap; color:var(--fb-ink); text-decoration:none; flex:none; }
+.fb-acts { display:flex; justify-content:space-around; border-top:1px solid var(--fb-line); margin:0 12px; padding:9px 0; color:var(--fb-mid); font-size:14px; font-weight:600; }
+
+/* Quiz and email gate */
+.hero { background:var(--deep); color:#fff; }
+.hero .wrap { padding-block:40px 48px; text-align:center; }
+.card { background:var(--paper); color:var(--ink); border-radius:12px; padding:24px 22px; max-width:560px; margin:26px auto 0; text-align:left; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+.bar { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:16px; }
+.bar i { display:block; height:100%; background:var(--sun); transition:width .3s ease; }
+.step { font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--sun-ink); margin-bottom:6px; }
+.card h2 { font-family:var(--display); font-weight:400; font-size:clamp(22px, 4.4vw, 26px); line-height:1.25; color:var(--char); margin:0 0 16px; }
+.ops { display:grid; gap:10px; }
+.op { display:flex; align-items:center; gap:12px; width:100%; min-height:52px; text-align:left; background:var(--cream); border:1.5px solid var(--line); border-radius:8px; padding:13px 16px; font:inherit; font-size:16px; color:var(--ink); cursor:pointer; }
+.op:hover { border-color:var(--sun); }
+.op[aria-pressed="true"] { border-color:var(--sun); background:var(--sun-soft); }
+.op .dot { flex:none; width:18px; height:18px; border-radius:50%; border:2px solid #B9B4A8; background:#fff; }
+.op[aria-pressed="true"] .dot { border-color:var(--sun); background:var(--sun); box-shadow:inset 0 0 0 3px #fff; }
+.back { background:none; border:0; color:var(--mid); font:inherit; font-size:14px; text-decoration:underline; cursor:pointer; margin-top:12px; padding:4px 0; }
+.field { display:grid; gap:4px; margin-bottom:12px; }
+.field label { font-size:13px; font-weight:700; color:var(--mid); }
+.field input { font:inherit; font-size:16px; padding:12px; border:1.5px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); width:100%; }
+.field input:focus { outline:none; border-color:var(--sun); box-shadow:0 0 0 3px rgba(233,178,66,.35); }
+.field input[aria-invalid="true"] { border-color:var(--err); }
+.err { color:var(--err); font-size:13px; }
+.fine { font-size:12.5px; color:var(--mid); margin-top:10px; }
+.facts { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-top:22px; }
+.fact { background:var(--cream); border:1px solid var(--line); border-radius:8px; padding:14px; text-align:center; }
+.fact b { display:block; font-family:var(--heavy); font-weight:400; font-size:24px; color:var(--char); font-variant-numeric:tabular-nums; }
+.fact span { font-size:13px; color:var(--mid); }
+
+/* Josh note */
+.josh { display:grid; grid-template-columns:180px minmax(0, 1fr); gap:26px; align-items:start; }
+.josh img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:50%; border:4px solid var(--sun); }
+.josh .say { display:grid; gap:12px; font-size:17px; }
+.josh .story { font-family:var(--display); font-size:21px; line-height:1.5; color:var(--char); }
+.sig { font-weight:700; color:var(--char); }
+.sig span { display:block; font-weight:400; color:var(--mid); font-size:14px; }
+
+/* Result */
+.rhero { background:var(--deep); color:#fff; }
+.rhero .wrap { display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr); gap:34px; align-items:center; padding-block:40px 44px; }
+.rhero .who { font-size:17px; color:var(--on-deep); margin-bottom:6px; }
+.rhero .end { font-family:var(--display); font-style:italic; font-size:clamp(20px, 3.6vw, 26px); line-height:1.35; color:var(--on-deep); margin:0 0 24px; }
+.rhero .under { font-size:13.5px; color:var(--on-deep-mid); margin-top:10px; }
+.rhero .photo { width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; }
+.saidlead { font-size:17.5px; max-width:62ch; margin:0 auto 20px; text-align:center; }
+.why { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+.why li { background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:16px 18px; display:grid; gap:8px; align-content:start; }
+.said { justify-self:start; font-size:12.5px; font-weight:700; color:var(--sun-ink); background:var(--sun-soft); border-radius:3px; padding:2px 8px; }
+.week { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+.week li { background:var(--cream); border:1px solid var(--line); border-radius:8px; padding:16px 18px; display:grid; gap:4px; align-content:start; }
+.week b { font-family:var(--heavy); font-weight:400; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--sun-ink); }
+.offer { background:var(--paper); border:2px solid var(--sun); border-radius:12px; padding:28px 24px; max-width:540px; margin:0 auto; text-align:center; }
+.offer h3 { font-family:var(--heavy); font-weight:400; text-transform:uppercase; font-size:24px; color:var(--char); margin:2px 0 10px; }
+.offer .price { font-family:var(--display); font-size:76px; line-height:1; color:var(--char); font-variant-numeric:tabular-nums; }
+.offer .price small { display:block; font-family:var(--body); font-size:14px; color:var(--mid); margin-top:8px; }
+ul.chk { list-style:none; padding:0; margin:20px 0; text-align:left; }
+ul.chk li { padding:9px 0 9px 30px; position:relative; border-bottom:1px solid var(--line); }
+ul.chk li::before { content:"\2713"; position:absolute; left:4px; color:var(--sun-ink); font-weight:700; }
+.terms { font-size:13px; color:var(--mid); margin-top:12px; }
+.notnow { display:inline-block; margin-top:14px; font-size:14.5px; color:var(--mid); }
+.annual { font-size:14.5px; color:var(--mid); margin-top:16px; text-align:center; }
+.budget { max-width:540px; margin:20px auto 0; text-align:center; font-size:15px; color:var(--mid); }
+.budget q { font-style:italic; color:var(--ink); }
+.path { list-style:none; padding:0; margin:0; display:grid; gap:10px; counter-reset:path; }
+.path li { counter-increment:path; display:grid; grid-template-columns:40px minmax(0, 1fr); gap:12px; align-items:center; background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:12px 16px; }
+.path li::before { content:counter(path); width:34px; height:34px; border-radius:50%; background:var(--deep); color:var(--sun); display:grid; place-items:center; font-family:var(--heavy); font-size:15px; }
+.path b { color:var(--char); }
+.path .tag { display:inline-block; margin-left:6px; font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--sun-ink); background:var(--sun-soft); border-radius:3px; padding:1px 7px; vertical-align:2px; }
+.quote { max-width:640px; margin:0 auto; text-align:center; display:grid; gap:10px; }
+.quote p { font-family:var(--display); font-style:italic; font-size:clamp(19px, 3.4vw, 22px); line-height:1.5; color:var(--char); }
+.quote b { font-size:14px; color:var(--mid); }
+details.faq { background:var(--paper); border:1px solid var(--line); border-radius:6px; }
+details.faq summary { cursor:pointer; padding:15px 18px; font-weight:700; color:var(--char); }
+details.faq p { padding:0 18px 16px; color:var(--mid); }
+
+/* Checkout and welcome */
+.co { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:20px; align-items:start; }
+.panel { background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:20px; display:grid; gap:12px; }
+.panel h3 { font-size:16px; margin:0; color:var(--char); }
+.rows { display:grid; }
+.rowl { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+.rowl span:last-child { text-align:right; white-space:nowrap; }
+.rowl.total { font-weight:700; border-bottom:0; font-size:17px; }
+.mini { list-style:none; padding:0; margin:0; display:grid; gap:4px; font-size:14px; color:var(--mid); }
+.mini li::before { content:"\2713  "; color:var(--sun-ink); font-weight:700; }
+.kv { display:grid; grid-template-columns:70px minmax(0, 1fr); gap:4px 10px; font-size:15px; }
+.kv dt { color:var(--mid); }
+.kv dd { margin:0; overflow-wrap:anywhere; }
+.payph { border:2px dashed #C9C3B5; border-radius:8px; padding:22px 16px; text-align:center; color:var(--mid); font-size:14px; background:var(--cream); }
+.first { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:20px; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:16px; align-items:center; }
+.first img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:6px; }
+.first .stack { gap:8px; }
+.first h3 { font-family:var(--heavy); font-weight:400; text-transform:uppercase; font-size:20px; line-height:1.2; color:var(--char); margin:0; }
+.tl { list-style:none; padding:0; margin:0; }
+.tl li { display:grid; grid-template-columns:96px minmax(0, 1fr); gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+.tl b { font-family:var(--heavy); font-weight:400; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--sun-ink); padding-top:2px; }
+
+/* Result email */
+.mail { background:var(--paper); border:1px solid var(--line); border-radius:10px; max-width:640px; margin:0 auto; overflow:hidden; box-shadow:0 6px 20px rgba(53,56,63,.08); }
+.mail-hd { padding:14px 18px; border-bottom:1px solid var(--line); font-size:14px; display:grid; gap:2px; color:var(--mid); }
+.mail-hd .s { font-weight:700; font-size:17px; color:var(--char); margin-bottom:4px; }
+.mail-hd b { color:var(--ink); font-weight:600; }
+.mail-bd { padding:22px 22px 28px; font-size:16px; line-height:1.65; display:grid; gap:14px; }
+.mail-bd ol { margin:0; padding-left:22px; display:grid; gap:4px; }
+.mail-bd .btn { justify-self:start; }
+
+.toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); background:var(--deep); color:#fff; padding:10px 16px; border-radius:8px; font-size:14px; width:max-content; max-width:calc(100% - 32px); z-index:20; box-shadow:0 6px 20px rgba(0,0,0,.25); }
+
+@media (max-width:760px) {
+  .rhero .wrap { grid-template-columns:1fr; gap:22px; padding-block:24px 36px; }
+  .rhero .photo { order:-1; aspect-ratio:16/10; }
+  .co { grid-template-columns:1fr; }
+}
+@media (max-width:680px) {
+  .why, .week { grid-template-columns:1fr; }
+  .josh { grid-template-columns:1fr; gap:16px; }
+  .josh img { width:120px; }
+  .first { grid-template-columns:1fr; }
+}
+@media (max-width:520px) {
+  .facts { grid-template-columns:1fr; }
+  .tl li { grid-template-columns:1fr; gap:2px; }
+  .band { padding-block:40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition:none !important; scroll-behavior:auto !important; }
+}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="rev" id="rev"></div>
+<main id="app"></main>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var FIRST = 7, RENEW = 29, ANNUAL = 298;
+
+  var Q = [
+    ["Where are you homesteading right now?", ["An apartment or a balcony", "A backyard in town", "A few acres", "Still dreaming about land"]],
+    ["How much time can you give it in a normal week?", ["An hour or two", "A few evenings", "Most weekends", "It's how we live"]],
+    ["What would you most like to stop buying?", ["Canned and packaged food", "Cold and flu remedies", "Eggs and meat", "Bread and staples"]],
+    ["What's held you back so far?", ["Not knowing where to start", "Too much conflicting advice", "Afraid I'll mess it up", "Not enough space"]],
+    ["What have you already tried?", ["Nothing yet", "A garden", "Canning or baking", "A few chickens"]],
+    ["What matters most to you about this?", ["Feeding my family real food", "Being ready for hard times", "Teaching my kids real skills", "Saving money"]]
+  ];
+
+  // Points each answer gives each path (p pantry, h herbal, a animals, k kitchen). Question 3 decides most of it.
+  var W = [
+    [{ k: 2, h: 2, p: 1, a: -4 }, { a: 2, p: 1, h: 1 }, { a: 3, p: 1 }, { k: 2, p: 1, h: 1, a: -1 }],
+    [{ k: 1, h: 1 }, { k: 1, p: 1 }, { p: 1, a: 1 }, { a: 2, p: 1 }],
+    [{ p: 5 }, { h: 5 }, { a: 5 }, { k: 5 }],
+    [{}, {}, {}, { a: -1, k: 1, h: 1 }],
+    [{ k: 1 }, { p: 2, h: 1 }, { p: 1, k: 1 }, { a: 2 }],
+    [{ k: 2, p: 1 }, { p: 2, h: 2 }, { a: 2 }, { k: 2, p: 1 }]
+  ];
+  var LETTER = { p: "pantry", h: "herbal", a: "animals", k: "kitchen" };
+  var KEYS = ["pantry", "herbal", "animals", "kitchen"];
+
+  // Sample answers used when someone jumps straight to a result.
+  var SAMPLE = {
+    pantry: [1, 1, 0, 1, 1, 1],
+    herbal: [0, 0, 1, 2, 0, 1],
+    animals: [2, 2, 2, 0, 1, 2],
+    kitchen: [3, 0, 3, 0, 2, 3]
+  };
+
+  var TIME = [
+    "The lessons are short. An hour or two a week is plenty to get your first win.",
+    "A few evenings is enough to finish your first class and try it at home.",
+    "Weekends are just right for a first project you can see, taste or hold.",
+    "You're ready to go deep. This path keeps going as far as you want to take it."
+  ];
+  var HELD = [
+    "That's what this is for. One skill first, in order, from a trusted teacher.",
+    "One trusted teacher per class, start to finish. No more piecing it together from random videos.",
+    "Every class goes step by step. And if you make a mistake, that's okay. You learn and keep going.",
+    "You don't need as much space as you think. This path was picked with your space in mind."
+  ];
+  var MATTERS = [
+    "Feeding your family real food starts with one skill you can do at home.",
+    "Every skill on this path is one less thing you have to count on the store for.",
+    "Kids love this one. Bring them along and learn it together.",
+    "Every batch you make yourself is one less thing on the grocery bill."
+  ];
+
+  var PATHS = {
+    pantry: {
+      name: "The Pantry Path", title: ["The Pantry", "Path"], short: "the Pantry Path", img: "img/jar_1.jpg",
+      alt: "Ladling hot broth into a canning jar",
+      end: "A full pantry starts with one jar.",
+      stop: "canned and packaged food",
+      space: "Canning fits any kitchen, from an apartment to a farmhouse.",
+      week: [["Tonight", "Print the Quickstart Preservation Guide."], ["This week", "Watch the first lesson of Water Bath Canning with Mary Shrader."], ["This weekend", "Put up your first small batch."]],
+      startAsset: "The Quickstart Preservation Guide (printable)",
+      firstClass: ["Water Bath Canning", "with Mary Shrader"],
+      next: [["Pressure Canning", "with Carolyn Thomas"], ["Dehydrating", ""], ["Bulk Pantry", ""]],
+      story: "We've been through fires, floods and a three-week blackout, feeding about eighteen people with no power, and we didn't have to panic. Not because we did it all at once, but because we started small. Very, very small.",
+      stake: "a shelf of jars you put up yourself",
+      quote: ["We are so grateful to have our STS membership throughout our homesteading journey! We reference the videos multiple times a week to help us plan and execute our homestead planning.", "Savannah L."]
+    },
+    herbal: {
+      name: "The Herb Cabinet Path", title: ["The Herb Cabinet", "Path"], short: "the Herb Cabinet Path", img: "img/herbs.jpg",
+      alt: "Snipping fresh herbs from a garden bed into a bowl",
+      end: "A home herb cabinet you trust.",
+      stop: "cold and flu remedies",
+      space: "An herb cabinet starts with a shelf and a few pots, whatever your space.",
+      week: [["Tonight", "Watch the Honey & Herbs workshop."], ["This week", "Start Herbal First Aid with Doc Jones."], ["This weekend", "Try your first simple recipe from the workshop."]],
+      startAsset: "The Honey & Herbs workshop (full video)",
+      firstClass: ["Herbal First Aid", "with Doc Jones"],
+      next: [["Herbal Cold and Flu Remedies", ""], ["Herb Gardening", "with Bevin Cohen"]],
+      story: "We grew up with \"just trust the professionals.\" Over time Carolyn and I learned we needed to take responsibility for our own health, and most of it came the hard way.",
+      stake: "a cabinet of simple remedies you made yourself",
+      quote: ["The School of Traditional Skills is worth every penny. The instruction is top notch, and I love being able to go back and watch them to review. I am constantly telling people about it.", "Rachel S."]
+    },
+    animals: {
+      name: "The Backyard Animals Path", title: ["The Backyard Animals", "Path"], short: "the Backyard Animals Path", img: "img/chicken_1.jpg",
+      alt: "Two red hens on green grass inside a poultry net",
+      end: "Fresh eggs from your own backyard.",
+      stop: "eggs and meat",
+      space: "You don't need as much space as you think. Check your town's rules first.",
+      week: [["Tonight", "Print Backyard Chickens Made Simple."], ["This week", "Start Backyard Chickens with Harvey Ussery."], ["This weekend", "Pick your coop spot and check your town's rules."]],
+      startAsset: "Backyard Chickens Made Simple and the Backyard Meat Rabbit Quick-Start Guide (printables)",
+      firstClass: ["Backyard Chickens", "with Harvey Ussery"],
+      next: [["Raising Rabbits", ""], ["Raising Pastured Meat Chickens", "with Justin Rhodes"]],
+      story: "When we got started, I killed like 75 chickens, and for me that was devastating. We kept going anyway.",
+      stake: "eggs from your own hens",
+      quote: ["We are LOVING the classes! They are very practical and thorough and show us how easily we could actually live out our dream of having a homestead.", "Laura S."]
+    },
+    kitchen: {
+      name: "The From-Scratch Kitchen Path", title: ["The From-Scratch Kitchen", "Path"], short: "the From-Scratch Kitchen Path", img: "img/bread_1.jpg",
+      alt: "Hands shaping a loaf of bread dough on a floured board",
+      end: "Fresh bread from your own kitchen.",
+      stop: "bread and staples",
+      space: "Bread and broth need nothing more than the kitchen you already have.",
+      week: [["Tonight", "Watch the Sourdough Rescue workshop with Maureen Diaz."], ["This week", "Start Everyday Bread Baking with Kristin Nobles."], ["This weekend", "Bake your first loaf."]],
+      startAsset: "The Sourdough Rescue workshop with Maureen Diaz (full video)",
+      firstClass: ["Everyday Bread Baking", "with Kristin Nobles"],
+      next: [["Traditional Sourdough", ""], ["Nourishing Bone Broth", "with Sally Fallon Morell"]],
+      story: "We've been there. No mentors, no neighbors, and everybody thought we were nuts. We learned it in the school of hard knocks and paid for it in time, money and food.",
+      stake: "bread on the table you baked yourself",
+      quote: ["I have saved myself and my family so much time and frustration by having unlimited access to all of the professional knowledge over so many homesteading areas. And, I love that new information and new instructors are continually being added. Truly, best money spent!", "Kimberli A."]
+    }
+  };
+
+  var STEPS = [
+    ["ad", "The ad"], ["quiz", "The quiz"], ["email", "Email"], ["result", "Result"],
+    ["checkout", "Checkout"], ["welcome", "Welcome"], ["result-email", "If they pick “Not now”"]
+  ];
+
+  var state = { answers: [null, null, null, null, null, null], q: 0, name: "", email: "", path: "pantry", adOpen: false };
+  var view = "", prevView = "";
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function complete(a) { return a.every(function (x) { return x !== null && x !== undefined; }); }
+  function score(a) {
+    var s = { pantry: 0, herbal: 0, animals: 0, kitchen: 0 };
+    a.forEach(function (o, i) {
+      if (o === null || o === undefined) return;
+      var w = W[i][o];
+      Object.keys(w).forEach(function (c) { s[LETTER[c]] += w[c]; });
+    });
+    return s;
+  }
+  function pathFor(a) {
+    var s = score(a), best = a[2] !== null && a[2] !== undefined ? KEYS[a[2]] : "pantry";
+    KEYS.forEach(function (k) { if (s[k] > s[best]) best = k; });
+    return best;
+  }
+  function price() { return "$" + FIRST; }
+  function renewDate() {
+    var d = new Date(); d.setDate(d.getDate() + 30);
+    return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  }
+  function first() { return state.name ? esc(state.name) : ""; }
+  function ensureAnswers() { if (!complete(state.answers)) state.answers = SAMPLE[state.path].slice(); }
+  function setPath(p) {
+    state.path = p;
+    if (!complete(state.answers) || pathFor(state.answers) !== p) state.answers = SAMPLE[p].slice();
+  }
+
+  /* ---------- shared pieces ---------- */
+  function site() {
+    return '<header class="site"><div class="wrap wide"><span class="logo"><img src="img/logo_icon.png" alt=""></span><b>School of<br>Traditional Skills</b></div></header>';
+  }
+  function foot(extra) {
+    return '<footer class="foot"><div class="wrap">' + (extra ? "<p>" + extra + "</p>" : "") +
+      "<p>Example page for review. Nothing here is live, charged or sent.</p></div></footer>";
+  }
+
+  /* ---------- reviewer bar ---------- */
+  function renderRev() {
+    var stepKey = view.indexOf("result") === 0 && view !== "result-email" ? "result" : view;
+    var steps = STEPS.map(function (s, i) {
+      var href = s[0] === "result" ? "#result-" + state.path : "#" + s[0];
+      var num = i < 6 ? '<span class="n">' + (i + 1) + "</span>" : "";
+      return '<a href="' + href + '"' + (s[0] === stepKey ? ' aria-current="page"' : "") + ">" + num + s[1] + "</a>";
+    }).join("");
+    var paths = KEYS.map(function (k) {
+      return '<a href="#result-' + k + '" data-act="path" data-p="' + k + '"' + (k === state.path ? ' aria-current="true"' : "") + ">" + PATHS[k].name.replace(/^The /, "").replace(/ Path$/, "") + "</a>";
+    }).join("");
+    document.getElementById("rev").innerHTML =
+      '<div class="wrap wide">' +
+        '<div class="rev-top"><p class="rev-title"><b>Quiz example for Josh</b> <span>&middot; $' + FIRST + " first month, then $" + RENEW + ' a month &middot; Nothing here is charged or sent</span></p></div>' +
+        '<nav class="chiprow" aria-label="The journey"><span class="lab">Journey</span><div class="chips">' + steps + "</div></nav>" +
+        '<nav class="chiprow" aria-label="Results"><span class="lab">Results</span><div class="chips">' + paths + "</div></nav>" +
+      "</div>";
+  }
+
+  /* ---------- 1. the ad ---------- */
+  var AD_TEXT = "Chickens? A garden? Canning? Bread? When you want to do all of it, it's hard to know what to do first, and the fear of picking wrong keeps you from picking at all.\n\nNobody should have to guess their way into homesteading.\n\nWe started in a second-story apartment with a few pots on the balcony, and we learned the order of things the hard way. So we made a short quiz. Six questions about your space, your time and what your family eats, and it tells you the one skill to start first. Really, really simple.\n\n";
+  function adText() {
+    var full = AD_TEXT + "Your result comes with your first month in the whole school for " + price() + ", then $" + RENEW + " a month. Cancel any time. Take the free 1-minute quiz.";
+    if (state.adOpen) return esc(full);
+    return esc(full.slice(0, full.lastIndexOf(" ", 120))) + '... <button type="button" class="fb-more" data-act="more">See more</button>';
+  }
+  function viewAd() {
+    return '<section class="feed"><div class="wrap">' +
+      '<p class="cap">Step 1: what people see in their Facebook and Instagram feed (cold ad, always on). Tap the ad to take the quiz.</p>' +
+      '<article class="fb" aria-label="Sponsored post from School of Traditional Skills">' +
+        '<div class="fb-hd"><span class="fb-av"><img src="img/logo_icon.png" alt=""></span><div><div class="fb-nm">School of Traditional Skills</div><div class="fb-sp">Sponsored</div></div></div>' +
+        '<p class="fb-tx">' + adText() + "</p>" +
+        '<a class="fb-im" href="#quiz"><img src="img/crops_in_hand.jpg" alt="Hands holding freshly dug red potatoes over a basket of vegetables">' +
+          '<span class="fb-pn"><span class="k">Free 1-minute quiz</span><span class="h" style="display:block">Which skill should you start first?</span><span class="p">Take the quiz</span></span></a>' +
+        '<div class="fb-ft"><div><div class="u">schooloftraditionalskills.com</div><div class="hl">Find the One Skill to Start First</div><div class="ds">Take the free 1-minute quiz.</div></div><a class="fb-cta" href="#quiz">Learn more</a></div>' +
+        '<div class="fb-acts" aria-hidden="true"><span>Like</span><span>Comment</span><span>Share</span></div>' +
+      "</article></div></section>";
+  }
+
+  /* ---------- 2. quiz and 3. email gate ---------- */
+  function quizCard() {
+    var i = state.q, q = Q[i];
+    return '<div class="bar" aria-hidden="true"><i style="width:' + (i / Q.length) * 100 + '%"></i></div>' +
+      '<p class="step">Question ' + (i + 1) + " of " + Q.length + "</p>" +
+      '<h2 id="qh" tabindex="-1">' + esc(q[0]) + "</h2>" +
+      '<div class="ops" role="group" aria-labelledby="qh">' + q[1].map(function (o, k) {
+        return '<button type="button" class="op" data-act="answer" data-k="' + k + '" aria-pressed="' + (state.answers[i] === k) + '"><span class="dot"></span>' + esc(o) + "</button>";
+      }).join("") + "</div>" +
+      (i > 0 ? '<button type="button" class="back" data-act="back">Back</button>' : "");
+  }
+  function emailCard() {
+    return '<div class="bar" aria-hidden="true"><i style="width:100%"></i></div>' +
+      '<p class="step">Your result is ready</p>' +
+      '<h2 id="qh" tabindex="-1">Where should we send your result?</h2>' +
+      '<form id="gate" novalidate>' +
+        '<div class="field"><label for="fname">First name</label><input id="fname" name="fname" autocomplete="given-name" value="' + esc(state.name) + '"><span class="err" id="fname-err" hidden>Please add your first name.</span></div>' +
+        '<div class="field"><label for="femail">Email</label><input id="femail" name="femail" type="email" autocomplete="email" value="' + esc(state.email) + '"><span class="err" id="femail-err" hidden>Please check your email address, for example name@example.com.</span></div>' +
+        '<button class="btn block" type="submit">Show my result</button>' +
+        '<p class="fine">Free. We\'ll send your result and a few short notes from Josh. Unsubscribe any time.</p>' +
+      "</form>" +
+      '<p class="fine"><button type="button" class="link" data-act="skip">Example only: skip this with a sample name</button></p>';
+  }
+  function viewQuiz(isEmail) {
+    return site() +
+      '<section class="hero"><div class="wrap">' +
+        '<span class="badge">Free 1-minute quiz</span>' +
+        '<h1 class="big" tabindex="-1">Which skill should<span>you start first?</span></h1>' +
+        '<p class="sub">Six quick questions about your space, your time and what your family eats. You get the one skill to start first, and the simplest way to begin it.</p>' +
+        '<div class="card" id="qcard">' + (isEmail ? emailCard() : quizCard()) + "</div>" +
+      "</div></section>" +
+      '<section class="band white"><div class="wrap">' +
+        '<div class="josh"><img src="img/josh_2.jpg" alt="Josh Thomas in a pasture, holding a clipboard">' +
+          '<div class="say"><p class="eyebrow">Why a quiz</p><h2 class="sec" style="margin:0">Start where you\'re at.</h2>' +
+            "<p>When Carolyn and I started, we had no mentors and no neighbors, and we learned the order of things the hard way. You don't have to. Tell us where you are, and we'll point you at the one skill that fits, taught by trusted experts, not random strangers on the internet.</p>" +
+            '<p class="sig">Josh Thomas<span>Co-founder, School of Traditional Skills</span></p></div></div>' +
+        '<div class="facts"><div class="fact"><b>34+</b><span>expert-led classes</span></div><div class="fact"><b>11,000+</b><span>members</span></div><div class="fact"><b>4.9/5</b><span>App Store rating</span></div></div>' +
+      "</div></section>" + foot();
+  }
+
+  /* ---------- 4. result page ---------- */
+  function viewResult() {
+    var p = PATHS[state.path], a = state.answers, pr = price(), date = renewDate();
+    var q3 = KEYS[a[2]];
+    var lead = q3 === state.path
+      ? "You said you'd most like to stop buying " + p.stop + ". So this is where we'd start."
+      : "You said you'd most like to stop buying " + PATHS[q3].stop + ". That's in the school too, on " + PATHS[q3].short + ". With your space and your time, we'd start here first, and the rest will make more sense when you get there.";
+    var why = [[Q[0][1][a[0]], p.space], [Q[1][1][a[1]], TIME[a[1]]], [Q[3][1][a[3]], HELD[a[3]]], [Q[5][1][a[5]], MATTERS[a[5]]]];
+    var cta = '<button type="button" class="btn" data-act="to-offer">Start my first month for ' + pr + "</button>";
+    return site() +
+      '<section class="rhero"><div class="wrap wide">' +
+        "<div>" +
+          '<span class="badge">Your result</span>' +
+          '<p class="who">' + (first() ? first() + ", your" : "Your") + " first skill is</p>" +
+          '<h1 class="big" tabindex="-1">' + p.title[0] + "<span>" + p.title[1] + "</span></h1>" +
+          '<p class="end">' + p.end + "</p>" + cta +
+          '<p class="under">' + pr + " for your first month, then $" + RENEW + " a month. Cancel any time.</p>" +
+        "</div>" +
+        '<img class="photo" src="' + p.img + '" alt="' + p.alt + '">' +
+      "</div></section>" +
+
+      '<section class="band"><div class="wrap">' +
+        '<p class="eyebrow center">Based on your answers</p><h2 class="sec center">Why this is your first skill</h2>' +
+        '<p class="saidlead">' + lead + "</p>" +
+        '<ul class="why">' + why.map(function (w) {
+          return '<li><span class="said">You said: ' + esc(w[0]) + "</span><p>" + w[1] + "</p></li>";
+        }).join("") + "</ul>" +
+      "</div></section>" +
+
+      '<section class="band white"><div class="wrap">' +
+        '<div class="josh"><img src="img/josh_2.jpg" alt="Josh Thomas in a pasture, holding a clipboard">' +
+          '<div class="say"><p class="eyebrow">A note from Josh</p>' +
+            '<p class="story">' + p.story + "</p>" +
+            "<p>You don't have to learn it the hard way like we did. Every class in the school is taught by trusted experts, not random strangers on the internet, step by step, start to finish.</p>" +
+            "<p>Start with one skill. Get one small win. Then the next one makes a lot more sense.</p>" +
+            '<p class="sig">Josh Thomas<span>Co-founder, with Carolyn, School of Traditional Skills</span></p></div></div>' +
+      "</div></section>" +
+
+      '<section class="band"><div class="wrap">' +
+        '<p class="eyebrow center">Your first week</p><h2 class="sec center">Three small steps. Very, very doable.</h2>' +
+        '<ol class="week">' + p.week.map(function (w) { return "<li><b>" + w[0] + "</b><p>" + w[1] + "</p></li>"; }).join("") + "</ol>" +
+      "</div></section>" +
+
+      '<section class="band tint" id="offer"><div class="wrap">' +
+        '<p class="eyebrow center">Your next step</p><h2 class="sec center" id="offer-h" tabindex="-1">Your first month for ' + pr + "</h2>" +
+        '<div class="offer"><p class="eyebrow">' + p.name + "</p><h3>First month</h3>" +
+          '<div class="price">' + pr + "<small>for 30 days of the whole school</small></div>" +
+          '<ul class="chk"><li>Every class in the school, 34+ and growing</li><li>Every printable Skill Sheet</li><li>Monthly live workshops</li><li>A community of 11,000+ members</li><li>' + p.startAsset + ", to start your path</li></ul>" +
+          '<button type="button" class="btn block" data-act="checkout">Start my first month for ' + pr + "</button>" +
+          '<p class="terms">' + pr + " today, then $" + RENEW + " a month from " + date + ", unless you cancel. Cancel any time. Our 30-day See It to Believe It guarantee applies.</p>" +
+          '<a class="notnow" href="#result-email">Not now, just email me my result</a>' +
+        "</div>" +
+        '<p class="annual">Prefer a full year? Annual is $' + ANNUAL + ", about $24.83 a month.</p>" +
+        '<p class="budget"><q>STS is amazing!!! I am a single mom who is on a very strict budget, but this was one of the best investments I ever made.</q> <b>Shannon K., STS member</b></p>' +
+      "</div></section>" +
+
+      '<section class="band white"><div class="wrap">' +
+        '<p class="eyebrow center">Where your path goes</p><h2 class="sec center">One skill, then the next.</h2>' +
+        '<ol class="path"><li><div><b>' + p.firstClass[0] + "</b> " + p.firstClass[1] + '<span class="tag">Start here</span></div></li>' +
+          p.next.map(function (n) { return "<li><div><b>" + n[0] + "</b>" + (n[1] ? " " + n[1] : "") + "</div></li>"; }).join("") + "</ol>" +
+        '<p class="lead center" style="margin-top:16px">And it\'s all in the same membership, along with gardening, cheesemaking, beekeeping and more.</p>' +
+      "</div></section>" +
+
+      '<section class="band"><div class="wrap"><figure class="quote" style="margin:0"><p>&ldquo;' + p.quote[0] + "&rdquo;</p><b>" + p.quote[1] + ", STS member</b></figure></div></section>" +
+
+      '<section class="band white"><div class="wrap"><h2 class="sec center">Questions folks ask</h2><div class="stack">' +
+        '<details class="faq"><summary>What happens after the first month?</summary><p>Your membership keeps going at $' + RENEW + " a month. We'll email you 5 days before your first full charge, so it's never a surprise.</p></details>" +
+        '<details class="faq"><summary>Can I cancel?</summary><p>Yes. Cancel any time, and you won\'t be billed again.</p></details>' +
+        '<details class="faq"><summary>Do I need land?</summary><p>No. As Josh puts it, &ldquo;So many people think that you need a lot of land to do this, and you don\'t.&rdquo; This path was picked to fit the space you told us about.</p></details>' +
+        '<details class="faq"><summary>How much time does it take?</summary><p>The lessons are short. Watch one, then go do it. Most of the learning happens in your kitchen, garden or backyard.</p></details>' +
+        '<details class="faq"><summary>What if it\'s not for me?</summary><p>Our 30-day See It to Believe It guarantee: watch the classes, download the Skill Sheets, and if it isn\'t what we promised, email us for a full refund. No questions asked.</p></details>' +
+      "</div></div></section>" +
+
+      '<section class="band deep"><div class="wrap center stack">' +
+        '<h2 class="sec">A year from now...</h2>' +
+        '<p class="lead" style="color:var(--on-deep)">You could have ' + p.stake + ". Or it could still be sitting in the someday pile. Start small. Start where you're at.</p>" +
+        "<div>" + cta + "</div>" +
+      "</div></section>" +
+      foot(state.path === "herbal" ? "Educational content only, not medical advice." : "");
+  }
+
+  /* ---------- 5. checkout ---------- */
+  function viewCheckout() {
+    var p = PATHS[state.path], pr = price(), date = renewDate();
+    return site() +
+      '<section class="band"><div class="wrap wide stack">' +
+        '<div><p class="eyebrow">Checkout</p><h1 class="sec" style="font-family:var(--display);font-weight:400;font-size:clamp(28px,5vw,38px);margin:0;color:var(--char)" tabindex="-1">Start your first month</h1><p class="lead">Starting on ' + p.name + ".</p></div>" +
+        '<div class="co">' +
+          '<div class="panel"><h3>Your order</h3><div class="rows">' +
+            '<div class="rowl"><span>School of Traditional Skills membership</span><span></span></div>' +
+            '<div class="rowl"><span>First month (30 days)</span><span>' + pr + ".00</span></div>" +
+            '<div class="rowl"><span>Then, from ' + date + "</span><span>$" + RENEW + ".00 a month</span></div>" +
+            '<div class="rowl total"><span>Due today</span><span>' + pr + ".00</span></div></div>" +
+            '<ul class="mini"><li>Cancel any time</li><li>A reminder email 5 days before your first $' + RENEW + " charge</li><li>30-day See It to Believe It guarantee</li></ul>" +
+          "</div>" +
+          '<div class="panel"><h3>Your details</h3>' +
+            '<dl class="kv"><dt>Name</dt><dd>' + (state.name ? esc(state.name) : "Not entered") + "</dd><dt>Email</dt><dd>" + (state.email ? esc(state.email) : "Not entered") + "</dd></dl>" +
+            '<div class="payph">STS\'s $' + FIRST + ' first-month checkout goes here.<br>This example never asks for card details.</div>' +
+            '<button type="button" class="btn block" data-act="welcome">Start my first month for ' + pr + "</button>" +
+            '<p class="fine" style="margin:0">' + pr + " today, then $" + RENEW + " a month from " + date + " until you cancel.</p>" +
+          "</div>" +
+        "</div>" +
+      "</div></section>" + foot();
+  }
+
+  /* ---------- 6. welcome ---------- */
+  function viewWelcome() {
+    var p = PATHS[state.path], date = renewDate();
+    return site() +
+      '<section class="hero"><div class="wrap"><span class="badge">You\'re in</span>' +
+        '<h1 class="big" tabindex="-1">Welcome to<span>the school' + (first() ? ", " + first() : "") + ".</span></h1>" +
+        '<p class="sub">Your first month has started. Here\'s where to click first.</p></div></section>' +
+      '<section class="band"><div class="wrap stack">' +
+        '<div class="first"><img src="' + p.img + '" alt="' + p.alt + '"><div class="stack">' +
+          '<p class="eyebrow" style="margin:0">Your first class on ' + p.short + "</p>" +
+          "<h3>" + p.firstClass[0] + "</h3><p>" + p.firstClass[1].replace(/^with /, "With ") + ". Lessons are short. Watch the first one tonight.</p>" +
+          '<div><button type="button" class="btn" data-act="toast" data-msg="In the live school, this opens lesson 1.">Watch lesson 1</button></div>' +
+          '<p class="fine" style="margin:0">Also waiting for you: ' + p.startAsset + ".</p>" +
+        "</div></div>" +
+      "</div></section>" +
+      '<section class="band white"><div class="wrap">' +
+        '<p class="eyebrow">What happens next</p><h2 class="sec">Your first month, step by step</h2>' +
+        '<ul class="tl">' +
+          "<li><b>Today</b><p>Your login details arrive by email.</p></li>" +
+          "<li><b>Day 2</b><p>Your first small win: one thing to try this week, with its Skill Sheet.</p></li>" +
+          "<li><b>Day 7</b><p>Say hello in the member community.</p></li>" +
+          "<li><b>Day 14</b><p>Want a full year? You can switch to annual for $" + ANNUAL + ", about $24.83 a month.</p></li>" +
+          "<li><b>Day 25</b><p>A reminder: your first month ends on " + date + ", when it renews at $" + RENEW + " a month. Cancel any time before then.</p></li>" +
+        "</ul>" +
+        '<p class="lead" style="margin-top:22px">Really, really glad you\'re here. <b>Josh</b></p>' +
+      "</div></section>" +
+      foot(state.path === "herbal" ? "Educational content only, not medical advice." : "");
+  }
+
+  /* ---------- result email ---------- */
+  function viewEmail() {
+    var p = PATHS[state.path], a = state.answers, pr = price();
+    var q3 = KEYS[a[2]];
+    var why = q3 === state.path
+      ? "You told us you'd most like to stop buying " + p.stop + ". So that's where we'd start. Not everything at once. One small step at a time."
+      : "You told us you'd most like to stop buying " + PATHS[q3].stop + ". We'll get there. With your space and your time, this is the best place to start.";
+    var hi = first() || "friend";
+    return '<section class="band tint"><div class="wrap stack">' +
+      '<p class="cap" style="font-family:var(--body);color:var(--mid);font-size:14px">If they pick &ldquo;Not now&rdquo;, this lands in their inbox right away. It\'s also the first email for everyone who finishes the quiz.</p>' +
+      '<article class="mail" aria-label="Result email">' +
+        '<div class="mail-hd"><span class="s" tabindex="-1" id="mail-s">' + (first() ? first() + ", here's" : "Here's") + " your first skill</span>" +
+          "<span>From <b>Josh Thomas, School of Traditional Skills</b></span><span>To <b>" + (state.email ? esc(state.email) : "you") + "</b></span></div>" +
+        '<div class="mail-bd">' +
+          "<p>Hi " + hi + ",</p>" +
+          "<p>Your result is in. Your first skill is <b>" + p.name + "</b>.</p>" +
+          "<p>" + why + "</p>" +
+          "<p>Here's your first week:</p>" +
+          "<ol>" + p.week.map(function (w) { return "<li><b>" + w[0] + ":</b> " + w[1].charAt(0).toLowerCase() + w[1].slice(1) + "</li>"; }).join("") + "</ol>" +
+          "<p>That's it. Really, really simple.</p>" +
+          "<p>When Carolyn and I started, we had no mentors and no neighbors, and we learned the order of things the hard way. You don't have to.</p>" +
+          "<p>When you're ready, your first month in the whole school is " + pr + ", then $" + RENEW + " a month. Cancel any time.</p>" +
+          '<a class="btn" href="#result-' + state.path + '">Start my first month for ' + pr + "</a>" +
+          "<p>Start where you're at. You can do this.</p>" +
+          "<p>Josh</p>" +
+          "<p><b>P.S.</b> Not ready yet? That's okay. Over the next couple of weeks I'll send a few short notes with simple first steps for " + p.short + ".</p>" +
+        "</div></article></div></section>";
+  }
+
+  /* ---------- router ---------- */
+  function readRoute() {
+    var h = (location.hash || "").replace(/^#/, "") || "ad";
+    var m = h.match(/^result-(pantry|herbal|animals|kitchen)$/);
+    if (m) { setPath(m[1]); return "result"; }
+    if (h === "result") { ensureAnswers(); state.path = pathFor(state.answers); return "result"; }
+    if (["ad", "quiz", "email", "checkout", "welcome", "result-email"].indexOf(h) > -1) return h;
+    return "ad";
+  }
+  function render(keepScroll) {
+    prevView = view;
+    view = readRoute();
+    if (view === "quiz" && prevView !== "quiz") state.q = 0;
+    if (["checkout", "welcome", "result-email"].indexOf(view) > -1) ensureAnswers();
+    var html = view === "ad" ? viewAd()
+      : view === "quiz" ? viewQuiz(false)
+      : view === "email" ? viewQuiz(true)
+      : view === "result" ? viewResult()
+      : view === "checkout" ? viewCheckout()
+      : view === "welcome" ? viewWelcome()
+      : viewEmail();
+    document.getElementById("app").innerHTML = html;
+    renderRev();
+    if (!keepScroll && prevView !== view) {
+      window.scrollTo(0, 0);
+      var h = document.querySelector("#app h1, #mail-s");
+      if (h && prevView) h.focus({ preventScroll: true });
+    }
+    if (view === "email") wireGate();
+  }
+  function go(h) {
+    if (location.hash === "#" + h) render(); else location.hash = h;
+  }
+  function redrawCard() {
+    var c = document.getElementById("qcard");
+    if (!c) return;
+    c.innerHTML = quizCard();
+    var h = document.getElementById("qh");
+    if (h) h.focus({ preventScroll: true });
+  }
+  function wireGate() {
+    var f = document.getElementById("gate");
+    if (!f) return;
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var n = document.getElementById("fname"), m = document.getElementById("femail");
+      var okN = n.value.trim().length > 0, okM = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.value.trim());
+      n.setAttribute("aria-invalid", String(!okN)); m.setAttribute("aria-invalid", String(!okM));
+      document.getElementById("fname-err").hidden = okN;
+      document.getElementById("femail-err").hidden = okM;
+      if (!okN) { n.focus(); return; }
+      if (!okM) { m.focus(); return; }
+      state.name = n.value.trim(); state.email = m.value.trim();
+      ensureAnswers();
+      go("result-" + pathFor(state.answers));
+    });
+  }
+  var toastTimer = 0;
+  function toast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-act]");
+    if (!t) return;
+    var act = t.getAttribute("data-act");
+    if (act === "answer") {
+      state.answers[state.q] = +t.getAttribute("data-k");
+      if (state.q < Q.length - 1) { state.q += 1; redrawCard(); }
+      else go("email");
+    } else if (act === "back") {
+      if (state.q > 0) { state.q -= 1; redrawCard(); }
+    } else if (act === "skip") {
+      state.name = "Sarah"; state.email = "sarah@example.com";
+      ensureAnswers();
+      go("result-" + pathFor(state.answers));
+    } else if (act === "more") {
+      state.adOpen = true; render(true);
+    } else if (act === "path") {
+      e.preventDefault();
+      var p = t.getAttribute("data-p");
+      if (["checkout", "welcome", "result-email"].indexOf(view) > -1) {
+        state.path = p; state.answers = SAMPLE[p].slice(); render(true);
+      } else go("result-" + p);
+    } else if (act === "to-offer") {
+      var o = document.getElementById("offer");
+      if (o) {
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        o.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        var oh = document.getElementById("offer-h"); if (oh) oh.focus({ preventScroll: true });
+      }
+    } else if (act === "checkout") {
+      go("checkout");
+    } else if (act === "welcome") {
+      go("welcome");
+    } else if (act === "toast") {
+      toast(t.getAttribute("data-msg"));
+    }
+  });
+  window.addEventListener("hashchange", function () { render(); });
+
+  function start(data) {
+    if (data && data.state) {
+      try { Object.assign(state, data.state); } catch (err) { /* keep defaults */ }
+    }
+    render();
+  }
+  var hot = window.claude && window.claude.hot;
+  if (hot && hot.snapshot) hot.snapshot(function () { return { state: state }; });
+  if (hot && hot.ready) hot.ready(start); else start(hot && hot.data ? hot.data : {});
+})();
+</script>
+
+</body>
+</html>

@@ -53,11 +53,10 @@ p { margin:0; }
 .chips .n { color:var(--sun); font-weight:700; margin-right:5px; font-variant-numeric:tabular-nums; }
 
 /* STS site chrome */
-.site { background:var(--paper); border-bottom:1px solid var(--line); }
-.site .wrap { display:flex; align-items:center; gap:10px; padding-block:12px; }
-.site .logo { width:34px; height:34px; border-radius:50%; background:var(--deep); display:grid; place-items:center; flex:none; }
-.site .logo img { width:24px; height:24px; }
-.site b { font-family:var(--heavy); font-weight:400; font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:var(--char); line-height:1.15; }
+/* the official STS horizontal logo (white title, gold sun) on charcoal, as on schooloftraditionalskills.com */
+.site { background:var(--char); }
+.site .wrap { display:flex; align-items:center; padding-block:14px; }
+.site .logo { display:block; width:160px; height:auto; }
 footer.foot { padding-block:26px 32px; text-align:center; font-size:13px; color:var(--mid); }
 footer.foot p + p { margin-top:4px; }
 
@@ -398,7 +397,7 @@ details.faq p { padding:0 18px 16px; color:var(--mid); }
 
   /* ---------- shared pieces ---------- */
   function site() {
-    return '<header class="site"><div class="wrap wide"><span class="logo"><img src="img/logo_icon.png" alt=""></span><b>School of<br>Traditional Skills</b></div></header>';
+    return '<header class="site"><div class="wrap wide"><img class="logo" src="img/sts-logo.svg" alt="School of Traditional Skills"></div></header>';
   }
   function foot(extra) {
     return '<footer class="foot"><div class="wrap">' + (extra ? "<p>" + extra + "</p>" : "") +

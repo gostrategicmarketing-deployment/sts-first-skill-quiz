@@ -36,6 +36,8 @@ p { margin:0; }
 .rev-top { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between; }
 .rev-title b { font-weight:700; }
 .rev-title span { color:var(--rev-mid); }
+.rev-title .ph { color:var(--sun); font-weight:700; }
+.phnote { display:inline-block; margin-top:12px; background:var(--rev); color:var(--sun); font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 10px; border-radius:999px; }
 .seg { display:inline-flex; align-items:center; gap:8px; }
 .seg-label { color:var(--rev-mid); }
 .seg-btns { display:inline-flex; border:1px solid var(--rev-line); border-radius:999px; overflow:hidden; }
@@ -416,7 +418,7 @@ details.faq p { padding:0 18px 16px; color:var(--mid); }
     }).join("");
     document.getElementById("rev").innerHTML =
       '<div class="wrap wide">' +
-        '<div class="rev-top"><p class="rev-title"><b>Quiz example for Josh</b> <span>&middot; $' + FIRST + " first month, then $" + RENEW + ' a month &middot; Nothing here is charged or sent</span></p></div>' +
+        '<div class="rev-top"><p class="rev-title"><b>Quiz example for Josh</b> <span>&middot; <span class="ph">$' + FIRST + ' is a placeholder first-month price, not final</span> &middot; Then $' + RENEW + ' a month &middot; Nothing here is charged or sent</span></p></div>' +
         '<nav class="chiprow" aria-label="The journey"><span class="lab">Journey</span><div class="chips">' + steps + "</div></nav>" +
         '<nav class="chiprow" aria-label="Results"><span class="lab">Results</span><div class="chips">' + paths + "</div></nav>" +
       "</div>";
@@ -529,6 +531,7 @@ details.faq p { padding:0 18px 16px; color:var(--mid); }
         '<p class="eyebrow center">Your next step</p><h2 class="sec center" id="offer-h" tabindex="-1">Your first month for ' + pr + "</h2>" +
         '<div class="offer"><p class="eyebrow">' + p.name + "</p><h3>First month</h3>" +
           '<div class="price">' + pr + "<small>for 30 days of the whole school</small></div>" +
+          '<p class="phnote">' + pr + " is a placeholder price</p>" +
           '<ul class="chk"><li>Every class in the school, 34+ and growing</li><li>Every printable Skill Sheet</li><li>Monthly live workshops</li><li>A community of 11,000+ members</li><li>' + p.startAsset + ", to start your path</li></ul>" +
           '<button type="button" class="btn block" data-act="checkout">Start my first month for ' + pr + "</button>" +
           '<p class="terms">' + pr + " today, then $" + RENEW + " a month from " + date + ", unless you cancel. Cancel any time. Our 30-day See It to Believe It guarantee applies.</p>" +
@@ -579,7 +582,7 @@ details.faq p { padding:0 18px 16px; color:var(--mid); }
           "</div>" +
           '<div class="panel"><h3>Your details</h3>' +
             '<dl class="kv"><dt>Name</dt><dd>' + (state.name ? esc(state.name) : "Not entered") + "</dd><dt>Email</dt><dd>" + (state.email ? esc(state.email) : "Not entered") + "</dd></dl>" +
-            '<div class="payph">STS\'s $' + FIRST + ' first-month checkout goes here.<br>This example never asks for card details.</div>' +
+            '<div class="payph">STS\'s first-month checkout goes here.<br>$' + FIRST + ' is a placeholder price, not final.<br>This example never asks for card details.</div>' +
             '<button type="button" class="btn block" data-act="welcome">Start my first month for ' + pr + "</button>" +
             '<p class="fine" style="margin:0">' + pr + " today, then $" + RENEW + " a month from " + date + " until you cancel.</p>" +
           "</div>" +
